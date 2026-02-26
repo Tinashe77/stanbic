@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanbic Bank - Global Markets Rates</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0A1929;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden; /* banking-hall display: fixed screen */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Stanbic Bank Brand Colors */
+        :root {
+            --stanbic-electric-blue: #0051FF;      /* Pantone 285C */
+            --stanbic-standard-blue: #0033A1;       /* Pantone 286C */
+            --stanbic-deep-blue: #00008C;          /* Pantone 2758C */
+            --stanbic-stature-blue: #00164E;       /* Pantone 289C */
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, var(--stanbic-standard-blue) 0%, var(--stanbic-deep-blue) 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 100;
+            width: 100%;
+            min-height: 80px;
+            flex-shrink: 0;
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .date-display {
+            font-size: 24px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Main Content Area */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0; /* allow children to scroll within flex layout */
+            padding: 30px 40px;
+            overflow: hidden; /* keep scroll inside rates container */
+        }
+
+        .disclaimer {
+            background: rgba(255, 193, 7, 0.15);
+            border-left: 4px solid #FFC107;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .disclaimer-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFC107;
+        }
+
+        /* Currency Rates Table */
+        .rates-container {
+            flex: 1;
+            min-height: 0; /* required so sticky thead + internal scroll works */
+            overflow: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .rates-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 20px;
+        }
+
+        .rates-table thead {
+            background: linear-gradient(135deg, var(--stanbic-standard-blue) 0%, var(--stanbic-electric-blue) 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .rates-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .rates-table th:last-child {
+            border-right: none;
+        }
+
+        .rates-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.2s ease;
+        }
+
+        .rates-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .rates-table td {
+            padding: 16px 15px;
+            font-size: 19px;
+        }
+
+        .currency-code {
+            font-weight: 700;
+            color: var(--stanbic-electric-blue);
+            font-size: 22px;
+        }
+
+        .country-name {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+        }
+
+        .rate-value {
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            color: #ffffff;
+        }
+
+        .rate-value.na {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Lower Third Ticker Section */
+        .ticker-section {
+            background: linear-gradient(135deg, var(--stanbic-standard-blue) 0%, var(--stanbic-deep-blue) 100%);
+            border-top: 3px solid var(--stanbic-electric-blue);
+            padding: 0;
+            height: 190px; /* reduced lower-third height */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .ticker-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .ticker-headline {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .indices-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .index-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .index-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .index-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .index-change {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .index-change.positive {
+            color: var(--stanbic-electric-blue);
+        }
+
+        .index-change.negative {
+            color: #F44336;
+        }
+
+        .index-change.neutral {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Scrolling Ticker */
+        .ticker-scroll {
+            padding: 10px 0;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            min-height: 70px;
+            height: 70px; /* reduced ticker strip height */
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ticker-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker-content {
+            display: inline-flex;
+            gap: 60px;
+            animation: scroll 40s linear infinite; /* faster ticker */
+            white-space: nowrap;
+            will-change: transform;
+            align-items: center;
+            height: auto;
+            min-width: max-content;
+            padding: 4px 0;
+            position: relative;
+            left: 100%;
+        }
+
+        .ticker-content:hover {
+            animation-play-state: paused;
+        }
+        
+        /* Show placeholder if ticker is empty */
+        .ticker-content:empty::before {
+            content: 'Stock ticker data loading...';
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            padding: 0 40px;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+            padding: 8px 0;
+            color: #ffffff;
+        }
+
+        .ticker-item::after {
+            content: '|';
+            color: rgba(255, 255, 255, 0.4);
+            margin-left: 30px;
+            font-weight: 300;
+            font-size: 18px;
+        }
+
+        .stock-code {
+            color: var(--stanbic-electric-blue);
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stock-price {
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stock-change {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stock-change.positive {
+            color: var(--stanbic-electric-blue);
+        }
+
+        .stock-change.negative {
+            color: #F44336;
+        }
+
+        .stock-change.neutral {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* (intentionally no extra ticker debug styles) */
+
+        /* Scrollbar Styling */
+        .rates-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .rates-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .rates-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+        }
+
+        .rates-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1920px) {
+            .rates-table {
+                font-size: 18px;
+            }
+            .rates-table th,
+            .rates-table td {
+                padding: 14px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="logo-white.png" alt="Stanbic Bank Global Markets">
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="header-title">GLOBAL MARKETS</div>
+        </div>
+        <div class="date-display" id="currentDate"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="disclaimer">
+            <div class="disclaimer-text">
+                ⚠️ THESE RATES ARE AN INDICATION ONLY. REFER TO THE DEALING ROOM FOR FIRM RATES
+            </div>
+        </div>
+
+        <div class="rates-container">
+            <table class="rates-table">
+                <thead>
+                    <tr>
+                        <th>CURRENCY</th>
+                        <th>COUNTRY</th>
+                        <th>SELLING</th>
+                        <th>BUYING</th>
+                        <th>MID RATE</th>
+                        <th>NOTES BUYING</th>
+                        <th>MID-CROSS RATES</th>
+                    </tr>
+                </thead>
+                <tbody id="ratesTableBody">
+                    <!-- 
+                        ============================================
+                        UPDATE CURRENCY RATES BELOW
+                        ============================================
+                        Format: Add rows following this pattern:
+                        <tr>
+                            <td><span class="currency-code">USD</span></td>
+                            <td><span class="country-name">USA</span></td>
+                            <td><span class="rate-value">26.4857</span></td>
+                            <td><span class="rate-value">24.6944</span></td>
+                            <td><span class="rate-value">25.5900</span></td>
+                            <td><span class="rate-value">24.6944</span></td>
+                            <td><span class="rate-value">25.590</span></td>
+                        </tr>
+                        For unavailable rates, use: <span class="rate-value na">N/A</span>
+                    -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lower Third Ticker -->
+    <div class="ticker-section">
+        <!-- Market headline + indices (above ticker) -->
+        <div class="ticker-header">
+            <div class="ticker-headline" id="headline">ZSE Stocks make new record</div>
+            <div class="indices-container" id="indicesContainer">
+                <!-- 
+                    ============================================
+                    UPDATE MARKET INDICES BELOW
+                    ============================================
+                -->
+            </div>
+        </div>
+
+        <!-- Stock Ticker (scrolling) -->
+        <div class="ticker-scroll">
+            <div class="ticker-wrapper">
+                <div class="ticker-content" id="tickerContent">
+                    <!-- 
+                        ============================================
+                        UPDATE STOCK TICKER DATA BELOW
+                        ============================================
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DATA LOADING - Reads from admin interface
+        // ============================================
+        
+        // Default data (used if no saved data exists)
+        const defaultData = {
+            currencies: [
+                { code: 'USD', country: 'USA', selling: '26.4857', buying: '24.6944', midRate: '25.5900', notesBuying: '24.6944', midCross: '25.590' },
+                { code: 'EUR', country: 'EUROPE', selling: '31.0678', buying: '29.5523', midRate: '30.3101', notesBuying: '29.5523', midCross: '1.1845' },
+                { code: 'CHF', country: 'SWITZERLAND', selling: '34.1111', buying: '32.4472', midRate: '33.2791', notesBuying: '32.4472', midCross: '0.7690' },
+                { code: 'ZAR', country: 'SOUTH AFRICA', selling: '1.6383', buying: '1.5584', midRate: '1.5984', notesBuying: '1.5584', midCross: '16.0103' },
+                { code: 'GBP', country: 'GT BRITAIN', selling: '35.7066', buying: '33.9648', midRate: '34.8357', notesBuying: '33.9648', midCross: '1.3613' },
+                { code: 'JPY', country: 'JAPAN', selling: '0.1716', buying: '0.1632', midRate: '0.1674', notesBuying: '0.1632', midCross: '152.8850' },
+                { code: 'BWP', country: 'BOTSWANA', selling: '1.9584', buying: '1.8632', midRate: '1.9108', notesBuying: '1.8632', midCross: '13.3950' },
+                { code: 'AUD', country: 'AUSTRALIA', selling: '17.2345', buying: '16.4090', midRate: '16.8218', notesBuying: '16.4090', midCross: '1.5210' },
+                { code: 'CAD', country: 'CANADA', selling: '19.4567', buying: '18.5292', midRate: '18.9930', notesBuying: '18.5292', midCross: '1.3478' },
+                { code: 'DKK', country: 'DENMARK', selling: '4.1678', buying: '3.9693', midRate: '4.0686', notesBuying: '3.9693', midCross: '6.2934' },
+                { code: 'INR', country: 'INDIA', selling: '0.3178', buying: '0.3027', midRate: '0.3103', notesBuying: 'N/A', midCross: '82.4567' },
+                { code: 'NOK', country: 'NORWAY', selling: '2.4567', buying: '2.3397', midRate: '2.3982', notesBuying: '2.3397', midCross: '10.6734' },
+                { code: 'SEK', country: 'SWEDEN', selling: '2.5234', buying: '2.4032', midRate: '2.4633', notesBuying: '2.4032', midCross: '10.3890' },
+                { code: 'NZD', country: 'NEW ZEALAND', selling: '16.1234', buying: '15.3556', midRate: '15.7395', notesBuying: '15.3556', midCross: '1.6256' },
+                { code: 'KES', country: 'KENYA', selling: '0.1823', buying: '0.1736', midRate: '0.1780', notesBuying: 'N/A', midCross: '143.7890' },
+                { code: 'MUR', country: 'MAURITIUS', selling: '0.5678', buying: '0.5408', midRate: '0.5543', notesBuying: 'N/A', midCross: '46.1789' },
+                { code: 'MWK', country: 'MALAWI', selling: '0.0145', buying: '0.0138', midRate: '0.0142', notesBuying: 'N/A', midCross: '1802.3456' },
+                { code: 'SZL', country: 'SWAZILAND', selling: '1.4567', buying: '1.3864', midRate: '1.4216', notesBuying: 'N/A', midCross: '18.0123' },
+                { code: 'ZMW', country: 'ZAMBIA', selling: '1.2345', buying: '1.1757', midRate: '1.2051', notesBuying: 'N/A', midCross: '21.2345' },
+                { code: 'HKD', country: 'HONGKONG', selling: '3.3789', buying: '3.2180', midRate: '3.2985', notesBuying: 'N/A', midCross: '7.7567' },
+                { code: 'CNY', country: 'CHINA', selling: '3.6789', buying: '3.5037', midRate: '3.5913', notesBuying: '3.5037', midCross: '7.1234' },
+                { code: 'CNH', country: 'CHINA', selling: '3.7123', buying: '3.5355', midRate: '3.6239', notesBuying: '3.5355', midCross: '7.0654' }
+            ],
+            indices: [
+                { label: 'All share', value: '197.85', change: '+2.36', type: 'positive' },
+                { label: 'Top 10', value: '194.45', change: '-2.74', type: 'negative' },
+                { label: 'Top 15', value: '197.85', change: '-2.36', type: 'negative' },
+                { label: 'Small Cap', value: '197.85', change: '+2.16', type: 'positive' }
+            ],
+            stocks: [
+                { code: 'ZW', price: '59.15', change: '+14.97', type: 'positive' },
+                { code: 'NTS.ZW', price: '56.2', change: '0', type: 'neutral' },
+                { code: 'NMB.ZW', price: '410', change: '0', type: 'neutral' },
+                { code: 'OKZ.ZW', price: '20.9509', change: '0', type: 'neutral' },
+                { code: 'ECON.ZW', price: '125.50', change: '+5.23', type: 'positive' },
+                { code: 'CBZ.ZW', price: '89.75', change: '-2.15', type: 'negative' },
+                { code: 'FBC.ZW', price: '45.30', change: '+1.80', type: 'positive' },
+                { code: 'NATFOOD.ZW', price: '78.90', change: '-0.50', type: 'negative' },
+                { code: 'INNSCOR.ZW', price: '156.25', change: '+3.45', type: 'positive' },
+                { code: 'SEEDCO.ZW', price: '92.10', change: '0', type: 'neutral' }
+            ],
+            headline: 'ZSE Stocks make new record'
+        };
+
+        // Load data from localStorage (saved by admin interface) or use defaults
+        function loadData() {
+            const saved = localStorage.getItem('stanbicRatesData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    return {
+                        currencies: data.currencies || defaultData.currencies,
+                        indices: data.indices || defaultData.indices,
+                        stocks: data.stocks || defaultData.stocks,
+                        headline: data.headline || defaultData.headline
+                    };
+                } catch (e) {
+                    console.error('Error loading saved data, using defaults:', e);
+                    return defaultData;
+                }
+            }
+            return defaultData;
+        }
+
+        // Load the data
+        let currentData = loadData();
+        const currencyRates = currentData.currencies;
+        const marketIndices = currentData.indices;
+        const stockTicker = currentData.stocks;
+        const headlineText = currentData.headline;
+
+        // Auto-refresh every 30 seconds (30 SECONDS) to pick up new data
+        setInterval(() => {
+            const newData = loadData();
+            if (JSON.stringify(newData) !== JSON.stringify(currentData)) {
+                location.reload();
+            }
+        }, 15000);
+
+        // Set Current Date - Dynamic and updates automatically
+        function updateDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const dateElement = document.getElementById('currentDate');
+            if (dateElement) {
+                dateElement.textContent = now.toLocaleDateString('en-GB', options);
+            }
+        }
+        
+        // Update date immediately on load
+        updateDate();
+        
+        // Update date every minute to catch day changes
+        setInterval(updateDate, 30000);
+        
+        // Also update date when page becomes visible (in case computer was asleep)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updateDate();
+            }
+        });
+
+        // Populate Currency Rates Table
+        function populateRatesTable() {
+            const tbody = document.getElementById('ratesTableBody');
+            tbody.innerHTML = '';
+
+            currencyRates.forEach(rate => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="currency-code">${rate.code}</span></td>
+                    <td><span class="country-name">${rate.country}</span></td>
+                    <td><span class="rate-value">${rate.selling}</span></td>
+                    <td><span class="rate-value">${rate.buying}</span></td>
+                    <td><span class="rate-value">${rate.midRate}</span></td>
+                    <td><span class="rate-value ${rate.notesBuying === 'N/A' ? 'na' : ''}">${rate.notesBuying}</span></td>
+                    <td><span class="rate-value">${rate.midCross}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Populate Market Indices
+        function populateIndices() {
+            const container = document.getElementById('indicesContainer');
+            container.innerHTML = '';
+
+            marketIndices.forEach(index => {
+                const indexDiv = document.createElement('div');
+                indexDiv.className = 'index-item';
+                
+                const changeSymbol = index.type === 'positive' ? '▲' : index.type === 'negative' ? '▼' : '--';
+                
+                indexDiv.innerHTML = `
+                    <div class="index-label">${index.label}</div>
+                    <div class="index-value">${index.value}</div>
+                    <div class="index-change ${index.type}">${index.change}% ${changeSymbol}</div>
+                `;
+                container.appendChild(indexDiv);
+            });
+        }
+
+        // Populate Stock Ticker
+        function populateTicker() {
+            const tickerContent = document.getElementById('tickerContent');
+            if (!tickerContent) {
+                console.error('Ticker content element not found');
+                return;
+            }
+            
+            console.log('Populating ticker, stockTicker:', stockTicker);
+            
+            tickerContent.innerHTML = '';
+
+            // Check if stockTicker exists and has data
+            if (!stockTicker || stockTicker.length === 0) {
+                console.warn('No stock ticker data available, showing placeholder');
+                tickerContent.innerHTML = '<div class="ticker-item" style="color: #ffffff; font-size: 22px; padding: 10px 40px;">📊 Stock ticker data will appear here</div>';
+                // Duplicate for scrolling effect
+                tickerContent.innerHTML += tickerContent.innerHTML;
+                return;
+            }
+
+            // Create stock items HTML
+            function createStockItem(stock) {
+                const changeSymbol = stock.type === 'positive' ? '▲' : stock.type === 'negative' ? '▼' : '--';
+                const changeDisplay = stock.change === '0' ? '0%' : `${stock.change}%`;
+                
+                return `
+                    <div class="ticker-item">
+                        <span class="stock-code">${stock.code}</span>
+                        <span class="stock-price">${stock.price} ZWG Cents</span>
+                        <span class="stock-change ${stock.type}">${changeDisplay} ${changeSymbol}</span>
+                    </div>
+                `;
+            }
+
+            // Duplicate items twice for seamless infinite scrolling
+            // When first set scrolls out, second set is already in position
+            const itemsHTML = stockTicker.map(createStockItem).join('');
+            tickerContent.innerHTML = itemsHTML + itemsHTML;
+            
+            console.log('Ticker populated with', stockTicker.length, 'stocks. HTML length:', tickerContent.innerHTML.length);
+            
+            // Force a reflow to ensure animation starts
+            tickerContent.offsetHeight;
+        }
+
+        // Set Headline
+        function setHeadline() {
+            document.getElementById('headline').textContent = headlineText;
+        }
+
+        // Initialize
+        function init() {
+            populateRatesTable();
+            populateIndices();
+            populateTicker();
+            setHeadline();
+        }
+
+        // Run on page load
+        init();
+    </script>
+</body>
+</html>
