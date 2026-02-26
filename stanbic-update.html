@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanbic Bank - Update Rates (Admin)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Stanbic Bank Brand Colors */
+        :root {
+            --stanbic-electric-blue: #0051FF;      /* Pantone 285C */
+            --stanbic-standard-blue: #0033A1;       /* Pantone 286C */
+            --stanbic-deep-blue: #00008C;          /* Pantone 2758C */
+            --stanbic-stature-blue: #00164E;       /* Pantone 289C */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--stanbic-standard-blue) 0%, var(--stanbic-deep-blue) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .header-logo img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .header-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--stanbic-standard-blue);
+            border-bottom-color: var(--stanbic-standard-blue);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--stanbic-standard-blue);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #003366;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .currency-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .currency-table th {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .currency-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .currency-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .currency-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--stanbic-standard-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--stanbic-electric-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 51, 161, 0.3);
+        }
+
+        .btn-success {
+            background: var(--stanbic-standard-blue);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--stanbic-electric-blue);
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .btn-secondary {
+            background: #666;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #555;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .add-currency-btn {
+            margin-bottom: 20px;
+        }
+
+        .stock-item,
+        .index-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+        }
+
+        .stock-item h3,
+        .index-item h3 {
+            margin-bottom: 15px;
+            color: #003366;
+        }
+
+        .remove-btn {
+            float: right;
+            padding: 6px 15px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            min-width: 400px;
+            max-width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            font-size: 16px;
+            font-weight: 600;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-close {
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 15px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+        }
+
+        .preview-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .preview-link:hover {
+            background: #45a049;
+        }
+
+        .csv-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed #003366;
+        }
+
+        .csv-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #003366;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #004080;
+        }
+
+        .csv-instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .csv-instructions h4 {
+            margin-bottom: 10px;
+            color: #1976D2;
+        }
+
+        .csv-instructions code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .csv-instructions ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .csv-instructions li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">
+                <img src="logo-white.png" alt="Stanbic Bank Logo">
+            </div>
+            <div class="header-content">
+                <h1>📊 Stanbic Bank - Rates Update Portal</h1>
+                <p>Update currency exchange rates, market indices, and stock ticker data</p>
+            </div>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('currencies')">Currency Rates</button>
+            <button class="tab" onclick="switchTab('indices')">Market Indices</button>
+            <button class="tab" onclick="switchTab('stocks')">Stock Ticker</button>
+            <button class="tab" onclick="switchTab('headline')">Headline</button>
+            <button class="tab" onclick="switchTab('csv')">📊 CSV Import/Export</button>
+        </div>
+
+        <!-- Currency Rates Tab -->
+        <div id="currencies" class="tab-content active">
+            <div class="section-title">Currency Exchange Rates</div>
+            <button class="btn btn-primary add-currency-btn" onclick="addCurrencyRow()">+ Add Currency</button>
+            <table class="currency-table">
+                <thead>
+                    <tr>
+                        <th>Currency Code</th>
+                        <th>Country</th>
+                        <th>Selling</th>
+                        <th>Buying</th>
+                        <th>Mid Rate</th>
+                        <th>Notes Buying</th>
+                        <th>Mid-Cross Rates</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="currencyTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Market Indices Tab -->
+        <div id="indices" class="tab-content">
+            <div class="section-title">Market Indices</div>
+            <button class="btn btn-primary add-currency-btn" onclick="addIndex()">+ Add Index</button>
+            <div id="indicesContainer"></div>
+        </div>
+
+        <!-- Stock Ticker Tab -->
+        <div id="stocks" class="tab-content">
+            <div class="section-title">Stock Ticker</div>
+            <button class="btn btn-primary add-currency-btn" onclick="addStock()">+ Add Stock</button>
+            <div id="stocksContainer"></div>
+        </div>
+
+        <!-- Headline Tab -->
+        <div id="headline" class="tab-content">
+            <div class="section-title">Headline Text</div>
+            <div class="form-group">
+                <label for="headlineInput">Headline (displayed in ticker section)</label>
+                <input type="text" id="headlineInput" placeholder="e.g., ZSE Stocks make new record">
+            </div>
+        </div>
+
+        <!-- CSV Import/Export Tab -->
+        <div id="csv" class="tab-content">
+            <div class="section-title">CSV Bulk Import/Export</div>
+            
+            <div class="csv-instructions">
+                <h4>📋 How to use CSV Import/Export</h4>
+                <ul>
+                    <li><strong>Export:</strong> Click "Export to CSV" to download all current data as CSV files</li>
+                    <li><strong>Import:</strong> Update the CSV files in Excel/Google Sheets, then click "Import from CSV" and select the files</li>
+                    <li><strong>Format:</strong> The CSV files must have the exact column headers shown below</li>
+                    <li><strong>Currency CSV:</strong> <code>code,country,selling,buying,midRate,notesBuying,midCross</code></li>
+                    <li><strong>Indices CSV:</strong> <code>label,value,change,type</code> (type must be: positive, negative, or neutral)</li>
+                    <li><strong>Stocks CSV:</strong> <code>code,price,change,type</code> (type must be: positive, negative, or neutral)</li>
+                </ul>
+            </div>
+
+            <div class="csv-section">
+                <h3 style="margin-bottom: 15px; color: #003366;">Currency Rates CSV</h3>
+                <div class="csv-buttons">
+                    <button class="btn btn-primary" onclick="exportCurrenciesCSV()">📥 Export Currencies to CSV</button>
+                    <div class="file-input-wrapper">
+                        <label for="importCurrencies" class="file-input-label">📤 Import Currencies from CSV</label>
+                        <input type="file" id="importCurrencies" accept=".csv" onchange="importCurrenciesCSV(event)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="csv-section">
+                <h3 style="margin-bottom: 15px; color: #003366;">Market Indices CSV</h3>
+                <div class="csv-buttons">
+                    <button class="btn btn-primary" onclick="exportIndicesCSV()">📥 Export Indices to CSV</button>
+                    <div class="file-input-wrapper">
+                        <label for="importIndices" class="file-input-label">📤 Import Indices from CSV</label>
+                        <input type="file" id="importIndices" accept=".csv" onchange="importIndicesCSV(event)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="csv-section">
+                <h3 style="margin-bottom: 15px; color: #003366;">Stock Ticker CSV</h3>
+                <div class="csv-buttons">
+                    <button class="btn btn-primary" onclick="exportStocksCSV()">📥 Export Stocks to CSV</button>
+                    <div class="file-input-wrapper">
+                        <label for="importStocks" class="file-input-label">📤 Import Stocks from CSV</label>
+                        <input type="file" id="importStocks" accept=".csv" onchange="importStocksCSV(event)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="csv-section">
+                <h3 style="margin-bottom: 15px; color: #003366;">Bulk Operations</h3>
+                <div class="csv-buttons">
+                    <button class="btn btn-success" onclick="exportAllCSV()">📥 Export All Data to CSV</button>
+                </div>
+                <p style="margin-top: 15px; color: #666; font-size: 14px;">
+                    <strong>Note:</strong> To bulk update, export all data first, update the CSV files in Excel/Google Sheets, then import each CSV file individually using the import buttons above.
+                </p>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-success" onclick="saveAll()">💾 Save All Changes</button>
+            <button class="btn btn-secondary" onclick="loadData()">🔄 Load Saved Data</button>
+            <button class="btn btn-danger" onclick="resetData()">⚠️ Reset to Default</button>
+            <a href="stanbic.html" target="_blank" class="preview-link">👁️ Preview Display</a>
+        </div>
+    </div>
+
+    <script>
+        // Load data from localStorage or use defaults
+        function loadData() {
+            const saved = localStorage.getItem('stanbicRatesData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                window.currencyRates = data.currencies || getDefaultCurrencies();
+                window.marketIndices = data.indices || getDefaultIndices();
+                window.stockTicker = data.stocks || getDefaultStocks();
+                window.headlineText = data.headline || 'ZSE Stocks make new record';
+            } else {
+                window.currencyRates = getDefaultCurrencies();
+                window.marketIndices = getDefaultIndices();
+                window.stockTicker = getDefaultStocks();
+                window.headlineText = 'ZSE Stocks make new record';
+            }
+            renderAll();
+            showAlert('Data loaded successfully!', 'success');
+        }
+
+        function getDefaultCurrencies() {
+            return [
+                { code: 'USD', country: 'USA', selling: '26.4857', buying: '24.6944', midRate: '25.5900', notesBuying: '24.6944', midCross: '25.590' },
+                { code: 'EUR', country: 'EUROPE', selling: '31.0678', buying: '29.5523', midRate: '30.3101', notesBuying: '29.5523', midCross: '1.1845' },
+                { code: 'CHF', country: 'SWITZERLAND', selling: '34.1111', buying: '32.4472', midRate: '33.2791', notesBuying: '32.4472', midCross: '0.7690' },
+                { code: 'ZAR', country: 'SOUTH AFRICA', selling: '1.6383', buying: '1.5584', midRate: '1.5984', notesBuying: '1.5584', midCross: '16.0103' },
+                { code: 'GBP', country: 'GT BRITAIN', selling: '35.7066', buying: '33.9648', midRate: '34.8357', notesBuying: '33.9648', midCross: '1.3613' },
+                { code: 'JPY', country: 'JAPAN', selling: '0.1716', buying: '0.1632', midRate: '0.1674', notesBuying: '0.1632', midCross: '152.8850' }
+            ];
+        }
+
+        function getDefaultIndices() {
+            return [
+                { label: 'All share', value: '197.85', change: '+2.36', type: 'positive' },
+                { label: 'Top 10', value: '194.45', change: '-2.74', type: 'negative' },
+                { label: 'Top 15', value: '197.85', change: '-2.36', type: 'negative' },
+                { label: 'Small Cap', value: '197.85', change: '+2.16', type: 'positive' }
+            ];
+        }
+
+        function getDefaultStocks() {
+            return [
+                { code: 'ZW', price: '59.15', change: '+14.97', type: 'positive' },
+                { code: 'NTS.ZW', price: '56.2', change: '0', type: 'neutral' },
+                { code: 'NMB.ZW', price: '410', change: '0', type: 'neutral' },
+                { code: 'OKZ.ZW', price: '20.9509', change: '0', type: 'neutral' }
+            ];
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function renderCurrencies() {
+            const tbody = document.getElementById('currencyTableBody');
+            tbody.innerHTML = '';
+            window.currencyRates.forEach((rate, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" value="${rate.code}" onchange="updateCurrency(${index}, 'code', this.value)"></td>
+                    <td><input type="text" value="${rate.country}" onchange="updateCurrency(${index}, 'country', this.value)"></td>
+                    <td><input type="text" value="${rate.selling}" onchange="updateCurrency(${index}, 'selling', this.value)"></td>
+                    <td><input type="text" value="${rate.buying}" onchange="updateCurrency(${index}, 'buying', this.value)"></td>
+                    <td><input type="text" value="${rate.midRate}" onchange="updateCurrency(${index}, 'midRate', this.value)"></td>
+                    <td><input type="text" value="${rate.notesBuying}" onchange="updateCurrency(${index}, 'notesBuying', this.value)"></td>
+                    <td><input type="text" value="${rate.midCross}" onchange="updateCurrency(${index}, 'midCross', this.value)"></td>
+                    <td><button class="btn btn-danger remove-btn" onclick="removeCurrency(${index})">Remove</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderIndices() {
+            const container = document.getElementById('indicesContainer');
+            container.innerHTML = '';
+            window.marketIndices.forEach((index, i) => {
+                const div = document.createElement('div');
+                div.className = 'index-item';
+                div.innerHTML = `
+                    <button class="btn btn-danger remove-btn" onclick="removeIndex(${i})">Remove</button>
+                    <h3>Index ${i + 1}</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Label</label>
+                            <input type="text" value="${index.label}" onchange="updateIndex(${i}, 'label', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Value</label>
+                            <input type="text" value="${index.value}" onchange="updateIndex(${i}, 'value', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Change (%)</label>
+                            <input type="text" value="${index.change}" onchange="updateIndex(${i}, 'change', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select onchange="updateIndex(${i}, 'type', this.value)">
+                                <option value="positive" ${index.type === 'positive' ? 'selected' : ''}>Positive</option>
+                                <option value="negative" ${index.type === 'negative' ? 'selected' : ''}>Negative</option>
+                                <option value="neutral" ${index.type === 'neutral' ? 'selected' : ''}>Neutral</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderStocks() {
+            const container = document.getElementById('stocksContainer');
+            container.innerHTML = '';
+            window.stockTicker.forEach((stock, i) => {
+                const div = document.createElement('div');
+                div.className = 'stock-item';
+                div.innerHTML = `
+                    <button class="btn btn-danger remove-btn" onclick="removeStock(${i})">Remove</button>
+                    <h3>Stock ${i + 1}</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Stock Code</label>
+                            <input type="text" value="${stock.code}" onchange="updateStock(${i}, 'code', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="text" value="${stock.price}" onchange="updateStock(${i}, 'price', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Change (%)</label>
+                            <input type="text" value="${stock.change}" onchange="updateStock(${i}, 'change', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select onchange="updateStock(${i}, 'type', this.value)">
+                                <option value="positive" ${stock.type === 'positive' ? 'selected' : ''}>Positive</option>
+                                <option value="negative" ${stock.type === 'negative' ? 'selected' : ''}>Negative</option>
+                                <option value="neutral" ${stock.type === 'neutral' ? 'selected' : ''}>Neutral</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderAll() {
+            renderCurrencies();
+            renderIndices();
+            renderStocks();
+            document.getElementById('headlineInput').value = window.headlineText || '';
+        }
+
+        function updateCurrency(index, field, value) {
+            window.currencyRates[index][field] = value;
+        }
+
+        function updateIndex(index, field, value) {
+            window.marketIndices[index][field] = value;
+        }
+
+        function updateStock(index, field, value) {
+            window.stockTicker[index][field] = value;
+        }
+
+        function addCurrencyRow() {
+            window.currencyRates.push({
+                code: 'NEW',
+                country: 'COUNTRY',
+                selling: '0.0000',
+                buying: '0.0000',
+                midRate: '0.0000',
+                notesBuying: '0.0000',
+                midCross: '0.000'
+            });
+            renderCurrencies();
+            showAlert('💡 Currency added. Remember to click "💾 Save All Changes" to apply to the display page.', 'warning', 6000);
+        }
+
+        function removeCurrency(index) {
+            if (confirm('Are you sure you want to remove this currency?')) {
+                window.currencyRates.splice(index, 1);
+                renderCurrencies();
+            }
+        }
+
+        function addIndex() {
+            window.marketIndices.push({
+                label: 'New Index',
+                value: '0.00',
+                change: '+0.00',
+                type: 'neutral'
+            });
+            renderIndices();
+            showAlert('💡 Index added. Remember to click "💾 Save All Changes" to apply to the display page.', 'warning', 6000);
+        }
+
+        function removeIndex(index) {
+            if (confirm('Are you sure you want to remove this index?')) {
+                window.marketIndices.splice(index, 1);
+                renderIndices();
+            }
+        }
+
+        function addStock() {
+            window.stockTicker.push({
+                code: 'NEW.ZW',
+                price: '0.00',
+                change: '0',
+                type: 'neutral'
+            });
+            renderStocks();
+            showAlert('💡 Stock added. Remember to click "💾 Save All Changes" to apply to the display page.', 'warning', 6000);
+        }
+
+        function removeStock(index) {
+            if (confirm('Are you sure you want to remove this stock?')) {
+                window.stockTicker.splice(index, 1);
+                renderStocks();
+            }
+        }
+
+        function saveAll() {
+            window.headlineText = document.getElementById('headlineInput').value;
+            const data = {
+                currencies: window.currencyRates,
+                indices: window.marketIndices,
+                stocks: window.stockTicker,
+                headline: window.headlineText,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('stanbicRatesData', JSON.stringify(data));
+            showAlert('✅ All changes saved successfully! The display page will now show updated rates. Changes will appear within 15-30 seconds.', 'success', 10000);
+        }
+
+        function resetData() {
+            if (confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
+                localStorage.removeItem('stanbicRatesData');
+                loadData();
+                showAlert('Data reset to defaults.', 'success');
+            }
+        }
+
+        function showAlert(message, type, duration = 8000) {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = message + '<span class="alert-close" onclick="this.parentElement.classList.remove(\'show\')">&times;</span>';
+            alert.className = `alert alert-${type} show`;
+            
+            // Auto-scroll to alert
+            alert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, duration);
+        }
+
+        // ============================================
+        // CSV Import/Export Functions
+        // ============================================
+
+        // Export Currencies to CSV
+        function exportCurrenciesCSV() {
+            const headers = ['code', 'country', 'selling', 'buying', 'midRate', 'notesBuying', 'midCross'];
+            const rows = window.currencyRates.map(r => [
+                r.code, r.country, r.selling, r.buying, r.midRate, r.notesBuying, r.midCross
+            ]);
+            downloadCSV('currencies', headers, rows);
+            showAlert('✅ Currencies exported to CSV successfully!', 'success');
+        }
+
+        // Export Indices to CSV
+        function exportIndicesCSV() {
+            const headers = ['label', 'value', 'change', 'type'];
+            const rows = window.marketIndices.map(i => [i.label, i.value, i.change, i.type]);
+            downloadCSV('indices', headers, rows);
+            showAlert('✅ Indices exported to CSV successfully!', 'success');
+        }
+
+        // Export Stocks to CSV
+        function exportStocksCSV() {
+            const headers = ['code', 'price', 'change', 'type'];
+            const rows = window.stockTicker.map(s => [s.code, s.price, s.change, s.type]);
+            downloadCSV('stocks', headers, rows);
+            showAlert('✅ Stocks exported to CSV successfully!', 'success');
+        }
+
+        // Export All to CSV
+        function exportAllCSV() {
+            exportCurrenciesCSV();
+            setTimeout(() => exportIndicesCSV(), 500);
+            setTimeout(() => exportStocksCSV(), 1000);
+            setTimeout(() => {
+                showAlert('✅ All data exported to CSV files! Check your downloads folder.', 'success');
+            }, 1500);
+        }
+
+        // Download CSV helper function
+        function downloadCSV(filename, headers, rows) {
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `stanbic_${filename}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Import Currencies from CSV
+        function importCurrenciesCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').filter(line => line.trim());
+                    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                    
+                    if (headers.length < 7) {
+                        throw new Error('Invalid CSV format. Expected 7 columns.');
+                    }
+
+                    const currencies = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = parseCSVLine(lines[i]);
+                        if (values.length >= 7) {
+                            currencies.push({
+                                code: values[0] || '',
+                                country: values[1] || '',
+                                selling: values[2] || '0.0000',
+                                buying: values[3] || '0.0000',
+                                midRate: values[4] || '0.0000',
+                                notesBuying: values[5] || 'N/A',
+                                midCross: values[6] || '0.000'
+                            });
+                        }
+                    }
+
+                    window.currencyRates = currencies;
+                    renderCurrencies();
+                    showAlert(`✅ Successfully imported ${currencies.length} currencies from CSV!<br><strong>⚠️ IMPORTANT:</strong> Click "💾 Save All Changes" button below to apply these changes to the display page.`, 'warning', 12000);
+                } catch (error) {
+                    showAlert(`❌ Error importing CSV: ${error.message}`, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset file input
+        }
+
+        // Import Indices from CSV
+        function importIndicesCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').filter(line => line.trim());
+                    const indices = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = parseCSVLine(lines[i]);
+                        if (values.length >= 4) {
+                            const type = ['positive', 'negative', 'neutral'].includes(values[3]) ? values[3] : 'neutral';
+                            indices.push({
+                                label: values[0] || '',
+                                value: values[1] || '0.00',
+                                change: values[2] || '0',
+                                type: type
+                            });
+                        }
+                    }
+
+                    window.marketIndices = indices;
+                    renderIndices();
+                    showAlert(`✅ Successfully imported ${indices.length} indices from CSV!<br><strong>⚠️ IMPORTANT:</strong> Click "💾 Save All Changes" button below to apply these changes to the display page.`, 'warning', 12000);
+                } catch (error) {
+                    showAlert(`❌ Error importing CSV: ${error.message}`, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Import Stocks from CSV
+        function importStocksCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').filter(line => line.trim());
+                    const stocks = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = parseCSVLine(lines[i]);
+                        if (values.length >= 4) {
+                            const type = ['positive', 'negative', 'neutral'].includes(values[3]) ? values[3] : 'neutral';
+                            stocks.push({
+                                code: values[0] || '',
+                                price: values[1] || '0.00',
+                                change: values[2] || '0',
+                                type: type
+                            });
+                        }
+                    }
+
+                    window.stockTicker = stocks;
+                    renderStocks();
+                    showAlert(`✅ Successfully imported ${stocks.length} stocks from CSV!<br><strong>⚠️ IMPORTANT:</strong> Click "💾 Save All Changes" button below to apply these changes to the display page.`, 'warning', 12000);
+                } catch (error) {
+                    showAlert(`❌ Error importing CSV: ${error.message}`, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Parse CSV line handling quoted values
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++; // Skip next quote
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        // Initialize on load
+        loadData();
+    </script>
+</body>
+</html>
